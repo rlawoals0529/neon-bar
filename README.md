@@ -41,14 +41,14 @@ npx http-server -p 8080 .
 # open http://localhost:8080/preview/
 ```
 
-The preview frames the real bar in an iframe and feeds it mocked provider output — drifting
+The preview frames the real bar in an iframe and feeds it mocked provider output - drifting
 CPU and memory, a rotating track, a running clock. The colour swatches under it retheme the
 live bar.
 
 ## How it is put together
 
 ```
-bar/render.js    render(state) — a pure function of a plain object
+bar/render.js    render(state) - a pure function of a plain object
 bar/bar.js       binds Zebar's providers onto that object
 bar/style.css    every colour derived from --accent
 preview/mock.js  the same object, generated locally
@@ -70,7 +70,7 @@ No API keys. Zebar's weather provider resolves location and forecast on its own.
 ## Status
 
 The layout, theming and update loop are verified in a browser against the mock. **The Zebar
-provider binding in `bar.js` has not been run against a live Zebar install** — it follows
+provider binding in `bar.js` has not been run against a live Zebar install** - it follows
 the documented `createProviderGroup` API, but field names may need adjusting on first run.
 If something reads empty, that mapping in `fromZebar()` is the place to look.
 
