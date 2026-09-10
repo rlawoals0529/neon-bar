@@ -1,0 +1,27 @@
+{
+  "$schema": "https://github.com/glzr-io/zebar/raw/main/resources/zpack-schema.json",
+  "name": "neon-bar",
+  "version": "0.1.0",
+  "description": "A dark status bar with one accent colour, GlazeWM workspaces, now-playing, and live CPU, memory, network and battery meters.",
+  "tags": ["bar", "glazewm", "dark", "minimal"],
+  "widgets": [
+    {
+      "name": "neon-bar",
+      "htmlPath": "bar/index.html",
+      "zOrder": "normal",
+      "shownInTaskbar": false,
+      "resizable": false,
+      "transparent": true,
+      "defaultPlacements": [
+        {
+          "anchor": "top_center",
+          "offsetX": "0px",
+          "offsetY": "0px",
+          "width": "100%",
+          "height": "38px",
+          "monitorSelection": { "type": "all" }
+        }
+      ]
+    }
+  ]
+}
