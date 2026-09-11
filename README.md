@@ -8,6 +8,10 @@ colour, and everything on it is live.
 Workspaces from GlazeWM, now playing, CPU and memory meters, network, battery, temperature
 and a clock. Click a workspace to focus it.
 
+## Try it
+
+**[rlawoals0529.github.io/neon-bar](https://rlawoals0529.github.io/neon-bar/)** - a live preview of the bar
+
 ## Retheming is one line
 
 Every colour on the bar derives from `--accent`, so changing the whole thing means changing
