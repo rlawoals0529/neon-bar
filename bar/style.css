@@ -1,15 +1,32 @@
-/* Neon bar — a dark, high-contrast status bar with a single accent hue.
-   Every colour derives from --accent, so retheming is one line. */
+/* The bar's own look. Every colour is a yozora token, so this file holds shape and light
+   and never a hue: see theme/palettes.css for where the colours come from.
+
+   Two things here are neon-bar's and not the design system's, and they are the reason this
+   repo does not look like the others: the accent GLOW on the focused workspace, and the
+   hairline meters. A status bar is read out of the corner of your eye, so it has to say
+   which workspace you are on without you looking straight at it. Glow does that; a border
+   does not.
+
+   --bar-alpha is NOT a taste, and it is not 0.82 any more. The bar floats over a wallpaper
+   nobody here has seen, so the palette's own guarantees - computed against an opaque --bg -
+   are void for anything painted on it. scripts/bar-alpha.mjs solves the real question: the
+   most transparent the bar can be while the chip outline still clears 3:1 against the WORST
+   wallpaper. Thirteen of the fifteen palettes answer 1, because yozora tunes --edge-strong
+   to just above 3:1 on its own --bg and there is no headroom left to spend. So the bar is
+   opaque, and the translucency this started with was a 1.78:1 outline waiting for a grey
+   desktop. Text is safe for a different reason: it all sits inside an opaque --raised chip,
+   which puts it back under the palette's own guarantees whatever is behind the bar.
+   e2e/contrast.spec.ts is what holds both of those, in a real browser. */
 :root {
-  --accent: #ff4d8d;
-  --accent-2: #4dd6ff;
-  --bg: rgba(12, 12, 18, 0.82);
-  --fg: #e9e9f2;
-  --dim: #8b8ba3;
-  --edge: rgba(255, 255, 255, 0.07);
-  --glow: 0 0 12px color-mix(in srgb, var(--accent) 55%, transparent);
-  --radius: 9px;
+  /* 9px, not the token's 12. A 26px-tall chip at radius 12 is a lozenge, and fifteen
+     lozenges in a row reads as a toolbar from another decade. The system sets the colours;
+     the shape is this repo's. */
+  --chip-radius: 9px;
   --gap: 7px;
+  --glow: 0 0 12px color-mix(in srgb, var(--accent) 55%, transparent);
+  /* The fallback matters: if bar-alpha.css fails to load, fall back to fully opaque rather
+     than to a guess. An opaque bar is ugly over a wallpaper and is never unreadable. */
+  --bar-alpha: 1;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -18,7 +35,7 @@ html, body {
   height: 100%;
   background: transparent;
   overflow: hidden;
-  font: 12.5px/1 "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+  font: 12.5px/1 var(--font-body, "Segoe UI Variable", "Segoe UI", system-ui, sans-serif);
   color: var(--fg);
   -webkit-font-smoothing: antialiased;
   user-select: none;
@@ -32,8 +49,7 @@ html, body {
   align-items: center;
   gap: var(--gap);
   padding: 0 10px;
-  background: var(--bg);
-  backdrop-filter: blur(18px) saturate(140%);
+  background: color-mix(in srgb, var(--bg) calc(var(--bar-alpha) * 100%), transparent);
   border-bottom: 1px solid var(--edge);
 }
 
@@ -44,13 +60,15 @@ html, body {
 .chip {
   display: flex; align-items: center; gap: 6px;
   height: 26px; padding: 0 10px;
-  background: rgba(255, 255, 255, 0.045);
-  border: 1px solid var(--edge);
-  border-radius: var(--radius);
+  /* Opaque --raised, not a white wash. A percentage of white lightens a light palette into
+     its own background and there is no chip left to see. */
+  background: var(--raised);
+  border: 1px solid var(--edge-strong);
+  border-radius: var(--chip-radius);
   white-space: nowrap;
   transition: background .18s ease, border-color .18s ease;
 }
-.chip:hover { background: rgba(255, 255, 255, 0.08); }
+.chip:hover { background: color-mix(in srgb, var(--raised) 70%, var(--fg)); }
 .chip .label { color: var(--dim); font-size: 11px; letter-spacing: .3px; }
 .chip .value { font-variant-numeric: tabular-nums; }
 
@@ -60,19 +78,25 @@ html, body {
   all: unset;
   min-width: 26px; height: 26px;
   display: grid; place-items: center;
-  border-radius: var(--radius);
-  border: 1px solid var(--edge);
-  background: rgba(255, 255, 255, 0.045);
+  border-radius: var(--chip-radius);
+  border: 1px solid var(--edge-strong);
+  background: var(--raised);
   color: var(--dim);
   font-variant-numeric: tabular-nums;
   transition: color .18s ease, border-color .18s ease, box-shadow .18s ease;
 }
 .ws button:hover { color: var(--fg); }
+/* Keyboard focus has to be visible on its own, without the glow: the glow says "this is the
+   workspace you are on", which is a different fact from "this is what Enter will press". */
+.ws button:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 2px;
+}
 .ws button[data-state="focused"] {
-  color: #fff;
-  border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+  color: var(--fg);
+  border-color: var(--accent);
   box-shadow: var(--glow);
-  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  background: color-mix(in srgb, var(--accent) 18%, var(--raised));
 }
 .ws button[data-state="populated"] { color: var(--fg); }
 
@@ -91,10 +115,11 @@ html, body {
 @keyframes eq { 0%,100% { height: 3px } 50% { height: 12px } }
 .paused .eq i { animation-play-state: paused; background: var(--dim); }
 
-/* Meters */
-.meter { position: relative; width: 42px; height: 4px; border-radius: 2px; background: rgba(255,255,255,.1); overflow: hidden; }
+/* Meters. --edge-strong for the empty half rather than a white wash, so the track is a
+   3:1 boundary against the chip in every palette instead of only in the dark ones. */
+.meter { position: relative; width: 42px; height: 4px; border-radius: 2px; background: var(--edge-strong); overflow: hidden; }
 .meter > i { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, var(--accent-2), var(--accent)); transition: width .4s ease; }
-.hot > i { background: linear-gradient(90deg, var(--accent), #ff2d55); }
+.hot > i { background: linear-gradient(90deg, var(--accent), var(--err)); }
 
 .clock .time { font-size: 13.5px; letter-spacing: .4px; }
 .clock .date { color: var(--dim); }

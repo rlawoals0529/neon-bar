@@ -1,0 +1,22 @@
+name: CI
+on:
+  push: { branches: [main] }
+  pull_request:
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22", cache: npm }
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      # The build runs `bar-alpha.mjs --check` and `tsc --noEmit` first, so a hand-edited
+      # generated file and a type error both stop here rather than in the browser suite.
+      - run: npm run build
+      - run: npm test
+      - run: npm run e2e
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with: { name: playwright-report, path: playwright-report/, retention-days: 7 }

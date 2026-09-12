@@ -1,14 +1,19 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="rain-lantern">
 <head>
 <meta charset="utf-8">
 <title>Neon bar</title>
+<!-- Every palette in one file, each scoped to [data-theme], so switching is one attribute
+     write and the bar needs no build step to do it. Vendored from yozora. -->
+<link rel="stylesheet" href="../theme/palettes.css">
+<!-- Solved, not chosen. See scripts/bar-alpha.mjs. -->
+<link rel="stylesheet" href="../theme/bar-alpha.css">
 <link rel="stylesheet" href="./style.css">
 </head>
 <body>
   <div class="bar">
     <div class="left">
-      <div class="ws chip" style="padding:0;border:none;background:none"></div>
+      <div class="ws"></div>
     </div>
     <div class="mid">
       <div class="chip media"></div>

@@ -5,6 +5,11 @@
  * same files open in a normal browser.
  */
 import { render } from "./render.js";
+import { applyThemeFromQuery } from "./theme.js";
+
+// Before anything paints. The preview frames this page in an iframe and names the palette in
+// the URL; on Windows the palette is the data-theme already in index.html and this is a no-op.
+applyThemeFromQuery();
 
 const empty = {
   workspaces: [], focusedWorkspace: null, media: null,
@@ -44,7 +49,11 @@ function fromZebar(out) {
 async function start() {
   let zebar;
   try {
-    zebar = await import("zebar");
+    // Through a variable so a bundler cannot try to resolve it. The preview build has no
+    // `zebar` package and never will; a statically visible specifier fails that build
+    // instead of falling through to the mock the way it does in a plain browser.
+    const host = "zebar";
+    zebar = await import(/* @vite-ignore */ host);
   } catch {
     const { mockProviders } = await import("../preview/mock.js");
     render({ ...empty, ...mockProviders.initial() });

@@ -1,37 +1,55 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="rain-lantern">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Neon bar - preview</title>
-<style>
-  body { margin: 0; min-height: 100vh; display: grid; place-items: center; gap: 26px;
-         background: #0a0a0f radial-gradient(1200px 500px at 50% -10%, #1b1030, #0a0a0f) no-repeat;
-         font: 13px system-ui, sans-serif; color: #6f6f88; padding: 40px 0; }
-  .frame { width: min(1180px, 94vw); height: 38px; border-radius: 10px; overflow: hidden;
-           box-shadow: 0 18px 50px rgba(0,0,0,.55); }
-  iframe { width: 100%; height: 100%; border: 0; }
-  .swatches { display: flex; gap: 10px; }
-  .swatches button { all: unset; width: 26px; height: 26px; border-radius: 50%; cursor: pointer;
-                     border: 2px solid rgba(255,255,255,.15); }
-</style>
+<link rel="stylesheet" href="../theme/palettes.css">
+<link rel="stylesheet" href="../theme/base.css">
+<!-- After base.css, which is the order it is written to be loaded in: it takes the frame off
+     every .panel and rebuilds the hierarchy out of space, so the one outlined thing on this
+     page can be the picker. -->
+<link rel="stylesheet" href="../theme/layout-flat.css">
+<link rel="stylesheet" href="../theme/motion.css">
+<link rel="stylesheet" href="../theme/texture.css">
+<link rel="stylesheet" href="./preview.css">
 </head>
-<body>
-  <div class="frame"><iframe id="bar" src="../bar/index.html"></iframe></div>
-  <div class="swatches">
-    <button style="background:#ff4d8d" data-accent="#ff4d8d" title="rose"></button>
-    <button style="background:#4dd6ff" data-accent="#4dd6ff" title="ice"></button>
-    <button style="background:#9d7bff" data-accent="#9d7bff" title="violet"></button>
-    <button style="background:#7bffb2" data-accent="#7bffb2" title="mint"></button>
-    <button style="background:#ffb84d" data-accent="#ffb84d" title="amber"></button>
-  </div>
-  <p>Retheming is one custom property. The bar itself is <code>bar/</code>; this page only frames it.</p>
-  <script>
-    document.querySelector(".swatches").addEventListener("click", (e) => {
-      const accent = e.target.dataset.accent;
-      if (!accent) return;
-      const doc = document.getElementById("bar").contentDocument;
-      doc.documentElement.style.setProperty("--accent", accent);
-    });
-  </script>
+<body class="grain">
+  <main class="wrap">
+    <h1>Neon bar</h1>
+    <p class="lede">
+      A status bar for Windows, on the fifteen yozora palettes. The frame below is the real
+      <code>bar/</code>, in an iframe, driven by a mock of Zebar's providers.
+    </p>
+
+    <div class="frame rise"><iframe id="bar" title="The bar, running" src="../bar/index.html"></iframe></div>
+
+    <section class="panel">
+      <h2>Palette</h2>
+      <div id="palette" class="swatches" aria-label="Palette"></div>
+      <p class="note" id="reading"></p>
+    </section>
+
+    <section class="panel">
+      <h2>Why the bar is opaque</h2>
+      <p>
+        It used to be 82% over the desktop. A bar floats on a wallpaper nobody who built it
+        has seen, so a palette's contrast guarantees - which are computed against an opaque
+        background - do not hold for anything painted on it. Sweeping every grey wallpaper
+        rather than just white and black, the 1px chip outline bottoms out at
+        <b>1.77:1</b> at 82%, against the 3:1 that WCAG asks of a boundary. It clears that
+        only at full opacity, and then only just:
+        <b>3.00 to 3.04:1</b> across the fifteen.
+      </p>
+      <p>
+        So the bar is opaque, and the text is safe for a separate reason: every readout sits
+        inside an opaque chip, which puts it back under the palette's own guarantees whatever
+        is behind. <code>e2e/contrast.spec.ts</code> holds that by measuring this page over a
+        white and a black backdrop and requiring the readings to be <em>identical</em>, not
+        merely passing.
+      </p>
+    </section>
+  </main>
+  <script type="module" src="./main.ts"></script>
 </body>
 </html>
