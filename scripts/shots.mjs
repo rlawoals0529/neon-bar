@@ -13,7 +13,7 @@ import { spawn } from "node:child_process";
 import { setTimeout as wait } from "node:timers/promises";
 
 const SHOTS = [
-  { theme: "rain-lantern", file: "docs/preview-rain-lantern.png" },
+  { theme: "twilight-comet", file: "docs/preview-twilight-comet.png" },
   { theme: "wisteria-alley", file: "docs/preview-wisteria-alley.png" },
 ];
 

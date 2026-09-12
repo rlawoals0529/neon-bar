@@ -20,7 +20,7 @@ test.describe("the bar's own palette", () => {
     // Applying it anyway leaves a bar with NO palette, painted in browser defaults, which
     // reads as a rendering bug rather than as a typo in a config file.
     await page.goto("/bar/index.html?theme=not-a-palette");
-    await expect(page.locator("html")).toHaveAttribute("data-theme", "rain-lantern");
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "twilight-comet");
     const fg = await page.evaluate(() =>
       getComputedStyle(document.documentElement).getPropertyValue("--fg").trim());
     expect(fg).not.toBe("");

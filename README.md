@@ -3,7 +3,7 @@
 A status bar for [Zebar](https://github.com/glzr-io/zebar) on Windows. One accent colour,
 fifteen palettes, and everything on it is live.
 
-![The bar on Rain Lantern](docs/preview-rain-lantern.png)
+![The bar on Twilight Comet, the palette every page here opens on](docs/preview-twilight-comet.png)
 
 Workspaces from GlazeWM, now playing, CPU and memory meters, network, battery, temperature
 and a clock. Click a workspace to focus it.

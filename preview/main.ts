@@ -12,12 +12,12 @@
  * and setting a property - only works because this page happens to be same-origin, and
  * silently stops working the day the bar moves.
  */
-import { createThemeStore, grouped, type Theme } from "../lib/theme";
+import { createThemeStore, DEFAULT_THEME, grouped, type Theme } from "../lib/theme";
 import { wirePalette } from "../lib/palette-keys";
 import manifest from "../theme/palettes.json";
 
 const themes = manifest as unknown as Theme[];
-const store = createThemeStore(themes, "rain-lantern", "neon-bar:theme");
+const store = createThemeStore(themes, DEFAULT_THEME, "neon-bar:theme");
 
 const frame = document.querySelector<HTMLIFrameElement>("#bar")!;
 const list = document.querySelector<HTMLElement>("#palette")!;
